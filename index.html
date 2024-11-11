@@ -12,7 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <!-- Styles -->
     <style>
-        /* [Your existing CSS code remains unchanged] */
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #0d1117;
@@ -109,6 +108,7 @@
         }
 
         .suggestions {
+            display: none; /* Hide the suggestions container by default */
             background-color: #161b22;
             border: 1px solid #30363d;
             border-radius: 5px;
@@ -478,6 +478,7 @@
             const input = inputElement.value.trim().toLowerCase();
             inputElement.value = ""; // Clear input field
             document.getElementById("suggestions").innerHTML = ""; // Clear suggestions
+            document.getElementById("suggestions").style.display = 'none'; // Hide suggestions
 
             // Validate input
             if (!input) {
@@ -508,11 +509,21 @@
             const suggestionsContainer = document.getElementById("suggestions");
             suggestionsContainer.innerHTML = "";
 
-            if (input.length === 0) return;
+            if (input.length === 0) {
+                suggestionsContainer.style.display = 'none'; // Hide when input is empty
+                return;
+            }
 
             const suggestions = cryptoList.filter(crypto =>
                 crypto.name.toLowerCase().includes(input) || crypto.symbol.toLowerCase().includes(input)
             ).slice(0, 10); // Limit to 10 suggestions
+
+            if (suggestions.length === 0) {
+                suggestionsContainer.style.display = 'none'; // Hide when no suggestions
+                return;
+            }
+
+            suggestionsContainer.style.display = 'block'; // Show when there are suggestions
 
             suggestions.forEach(crypto => {
                 const suggestionElement = document.createElement("div");
@@ -520,6 +531,7 @@
                 suggestionElement.onclick = () => {
                     document.getElementById("new-card-symbol").value = crypto.symbol.toLowerCase();
                     suggestionsContainer.innerHTML = "";
+                    suggestionsContainer.style.display = 'none'; // Hide after selection
                 };
                 suggestionsContainer.appendChild(suggestionElement);
             });
